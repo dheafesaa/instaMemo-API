@@ -1,6 +1,7 @@
 import express, { json } from 'express';
 import { allActiveMemo } from './controllers/active-memo.mjs';
 import { initializeFirebaseAdmin } from './config/firebase-admin.mjs';
+import { addMemo } from './controllers/add-memo.mjs';
 
 const app = express();
 app.use(json());
@@ -10,6 +11,7 @@ initializeFirebaseAdmin();
 
 // Define routes
 app.get('/active-memo', allActiveMemo);
+app.post('/add-memo', addMemo);
 
 // Start server
 const PORT = 3000;
