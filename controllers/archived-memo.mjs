@@ -20,14 +20,14 @@ const firebaseConfig = {
 const fireInit = initializeApp(firebaseConfig);
 const db = getFirestore(fireInit);
 
-export const allActiveMemo = async (req, res) => {
+export const allArchivedMemo = async (req, res) => {
   try {
-    const activeMemoCollection = collection(db, "memo");
-    const q = query(activeMemoCollection, where("archived", "==", false));
+    const archivedMemoCollection = collection(db, "memo");
+    const q = query(archivedMemoCollection, where("archived", "==", true));
 
     const querySnapshot = await getDocs(q);
 
-    const activeMemoList = querySnapshot.docs.map((doc) => ({
+    const archivedMemoList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       title: doc.data().title,
       body: doc.data().body,
@@ -36,7 +36,7 @@ export const allActiveMemo = async (req, res) => {
       owner: doc.data().owner,
     }));
 
-    if (activeMemoList.length === 0) {
+    if (archivedMemoList.length === 0) {
       return res.status(404).json({
         status: "success",
         message: "No archived memo found.",
@@ -47,7 +47,7 @@ export const allActiveMemo = async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "Memo retrieved",
-      data: activeMemoList,
+      data: archivedMemoList,
     });
   } catch (error) {
     const errorCode = error.code || 500;
