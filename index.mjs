@@ -5,6 +5,7 @@ import { allArchivedMemo } from "./controllers/archived-memo.mjs";
 import { addMemo } from "./controllers/add-memo.mjs";
 import { getMemoDetail } from "./controllers/detail-memo.mjs";
 import { deleteMemo } from "./controllers/delete-memo.mjs";
+import { register } from "./controllers/authentication/register-memo.mjs";
 
 const app = express();
 app.use(json());
@@ -12,7 +13,10 @@ app.use(json());
 // Initialize Firebase Admin SDK
 initializeFirebaseAdmin();
 
-// Define routes
+// Define routes for authentication 
+app.post("/register", register)
+
+// Define routes for memo 
 app.get("/memo/active-memo", allActiveMemo);
 app.get("/memo/archived-memo", allArchivedMemo);
 app.post("/memo/add-memo", addMemo);
