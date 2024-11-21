@@ -3,6 +3,7 @@ import { initializeFirebaseAdmin } from "./config/firebase-admin.mjs";
 import { allActiveMemo } from "./controllers/active-memo.mjs";
 import { allArchivedMemo } from "./controllers/archived-memo.mjs";
 import { addMemo } from "./controllers/add-memo.mjs";
+import { getMemoDetail } from "./controllers/detail-memo.mjs";
 import { deleteMemo } from "./controllers/delete-memo.mjs";
 
 const app = express();
@@ -15,6 +16,7 @@ initializeFirebaseAdmin();
 app.get("/memo/active-memo", allActiveMemo);
 app.get("/memo/archived-memo", allArchivedMemo);
 app.post("/memo/add-memo", addMemo);
+app.get("/memo/:memo_id", getMemoDetail);
 app.delete("/memo/:memo_id", deleteMemo);
 
 // Start server
