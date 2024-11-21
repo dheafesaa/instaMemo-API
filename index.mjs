@@ -6,6 +6,7 @@ import { addMemo } from "./controllers/add-memo.mjs";
 import { getMemoDetail } from "./controllers/detail-memo.mjs";
 import { deleteMemo } from "./controllers/delete-memo.mjs";
 import { register } from "./controllers/authentication/register-memo.mjs";
+import { login } from "./controllers/authentication/login-memo.mjs";
 
 const app = express();
 app.use(json());
@@ -15,6 +16,7 @@ initializeFirebaseAdmin();
 
 // Define routes for authentication 
 app.post("/register", register)
+app.post("/login", login)
 
 // Define routes for memo 
 app.get("/memo/active-memo", allActiveMemo);
