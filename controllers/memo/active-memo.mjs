@@ -22,31 +22,40 @@ const db = getFirestore(fireInit);
 
 export const allActiveMemo = async (req, res) => {
   try {
+    const user = req.user;
+
+    if (!user || !user.uid) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized. Please log in.",
+      });
+    }
+
     const activeMemoCollection = collection(db, "memo");
-    const q = query(activeMemoCollection, where("archived", "==", false));
+    const q = query(
+      activeMemoCollection,
+      where("archived", "==", false),
+      where("owner", "==", user.uid),
+    );
 
     const querySnapshot = await getDocs(q);
 
     const activeMemoList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      title: doc.data().title,
-      body: doc.data().body,
-      createdAt: doc.data().createdAt,
-      archived: doc.data().archived,
-      owner: doc.data().owner,
+      ...doc.data(),
     }));
 
     if (activeMemoList.length === 0) {
       return res.status(404).json({
         status: "success",
-        message: "No archived memo found.",
+        message: "No active memos found.",
         data: [],
       });
     }
 
     return res.status(200).json({
       status: "success",
-      message: "Memo retrieved",
+      message: "Memos retrieved",
       data: activeMemoList,
     });
   } catch (error) {

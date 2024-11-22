@@ -20,6 +20,15 @@ const db = getFirestore(fireInit);
 
 export const getMemoDetail = async (req, res) => {
   try {
+    const user = req.user;
+
+    if (!user || !user.uid) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized. Please log in.",
+      });
+    }
+
     const { memo_id } = req.params;
 
     if (!memo_id) {
@@ -30,7 +39,6 @@ export const getMemoDetail = async (req, res) => {
     }
 
     const memoRef = doc(db, "memo", memo_id);
-
     const memoSnapshot = await getDoc(memoRef);
 
     if (!memoSnapshot.exists()) {
@@ -40,15 +48,22 @@ export const getMemoDetail = async (req, res) => {
       });
     }
 
-    const memoData = {
-      id: memoSnapshot.id,
-      ...memoSnapshot.data(),
-    };
+    const memoData = memoSnapshot.data();
+
+    if (memoData.owner !== user.uid) {
+      return res.status(403).json({
+        status: "error",
+        message: "Forbidden. You do not have access to this memo.",
+      });
+    }
 
     return res.status(200).json({
       status: "success",
       message: "Memo retrieved",
-      data: memoData,
+      data: {
+        id: memoSnapshot.id,
+        ...memoData,
+      },
     });
   } catch (error) {
     console.error("Error fetching memo details:", error);

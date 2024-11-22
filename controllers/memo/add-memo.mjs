@@ -16,9 +16,17 @@ const db = getFirestore(fireInit);
 
 export const addMemo = async (req, res) => {
   try {
-    const { title, body, owner } = req.body;
+    const { title, body } = req.body;
+    const user = req.user;
 
-    if (!title || !body || !owner) {
+    if (!user || !user.uid) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized. Please log in.",
+      });
+    }
+
+    if (!title || !body) {
       return res.status(400).json({
         status: "error",
         message: "Title and body are required fields.",
@@ -28,7 +36,7 @@ export const addMemo = async (req, res) => {
     const newMemo = {
       title,
       body,
-      owner,
+      owner: user.uid,
       archived: false,
       createdAt: new Date().toISOString(),
     };
@@ -44,13 +52,10 @@ export const addMemo = async (req, res) => {
       },
     });
   } catch (error) {
-    const errorCode = error.code || 500;
-    const errorMessage = error.message || "Internal Server Error";
-    return res.status(errorCode).json({
-      error: {
-        code: errorCode,
-        message: errorMessage,
-      },
+    console.error("Error adding memo:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
     });
   }
 };

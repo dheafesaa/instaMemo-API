@@ -4,13 +4,11 @@ import {
   collection,
   doc,
   setDoc,
-  getDoc,
-  updateDoc,
   query,
   where,
   getDocs,
 } from "firebase/firestore/lite";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"; 
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import bcrypt from "bcrypt";
 
 const firebaseConfig = {
@@ -47,7 +45,7 @@ export const register = async (req, res) => {
 
     const usersCollection = collection(db, "users");
     const existingUserSnapshot = await getDocs(
-      query(usersCollection, where("email", "==", email))
+      query(usersCollection, where("email", "==", email)),
     );
 
     if (!existingUserSnapshot.empty) {
@@ -57,34 +55,22 @@ export const register = async (req, res) => {
       });
     }
 
-    const counterRef = doc(db, "counters", "users_counter");
-    const counterSnapshot = await getDoc(counterRef);
-
-    let userId;
-    if (counterSnapshot.exists()) {
-      const currentCounter = counterSnapshot.data().value;
-      userId = currentCounter + 1;
-
-      await updateDoc(counterRef, { value: userId });
-    } else {
-      userId = 1;
-
-      await setDoc(counterRef, { value: userId });
-    }
-
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
     const firebaseUser = userCredential.user;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = {
-      id: userId,
       name,
       email,
-      firebaseUid: firebaseUser.uid, 
-      password: hashedPassword, 
+      firebaseUid: firebaseUser.uid,
+      password: hashedPassword,
     };
-    await setDoc(doc(usersCollection, String(userId)), newUser);
+    await setDoc(doc(usersCollection, firebaseUser.uid), newUser);
 
     return res.status(201).json({
       status: "success",
@@ -93,12 +79,9 @@ export const register = async (req, res) => {
   } catch (error) {
     console.error("Error registering user:", error);
 
-    const errorCode = error.code || 500;
-    const errorMessage = error.message || "Internal Server Error";
-
-    return res.status(errorCode).json({
+    return res.status(500).json({
       status: "error",
-      message: errorMessage,
+      message: error.message || "Internal Server Error",
     });
   }
 };

@@ -22,18 +22,27 @@ const db = getFirestore(fireInit);
 
 export const allArchivedMemo = async (req, res) => {
   try {
+    const user = req.user;
+
+    if (!user || !user.uid) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized. Please log in.",
+      });
+    }
+
     const archivedMemoCollection = collection(db, "memo");
-    const q = query(archivedMemoCollection, where("archived", "==", true));
+    const q = query(
+      archivedMemoCollection,
+      where("archived", "==", true),
+      where("owner", "==", user.uid),
+    );
 
     const querySnapshot = await getDocs(q);
 
     const archivedMemoList = querySnapshot.docs.map((doc) => ({
       id: doc.id,
-      title: doc.data().title,
-      body: doc.data().body,
-      createdAt: doc.data().createdAt,
-      archived: doc.data().archived,
-      owner: doc.data().owner,
+      ...doc.data(),
     }));
 
     if (archivedMemoList.length === 0) {
