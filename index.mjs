@@ -9,6 +9,7 @@ import { register } from "./controllers/authentication/register-memo.mjs";
 import { login } from "./controllers/authentication/login-memo.mjs";
 import { authMiddleware } from "./middleware/auth-middleware.mjs";
 import { getUserLoggedIn } from "./controllers/authentication/user-loggedin-memo.mjs";
+import { editMemo } from "./controllers/memo/edit-memo.mjs";
 
 const app = express();
 app.use(json());
@@ -27,6 +28,7 @@ app.get("/memo/archived-memo", authMiddleware, allArchivedMemo);
 app.post("/memo/add-memo", authMiddleware, addMemo);
 app.get("/memo/:memo_id", authMiddleware, getMemoDetail);
 app.delete("/memo/:memo_id", authMiddleware, deleteMemo);
+app.patch("/memo/:memo_id", authMiddleware, editMemo)
 
 // Start server
 const PORT = 3000;
