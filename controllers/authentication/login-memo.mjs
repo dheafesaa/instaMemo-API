@@ -7,6 +7,7 @@ import {
   where,
 } from "firebase/firestore/lite";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import bcrypt from "bcrypt";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCaCieh2J7pQWxNu7zSkPBX-tWSu868Fe4",
@@ -33,9 +34,6 @@ export const login = async (req, res) => {
       });
     }
 
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-
     const usersCollection = collection(db, "users");
     const emailQuery = query(usersCollection, where("email", "==", email));
     const querySnapshot = await getDocs(emailQuery);
@@ -46,6 +44,24 @@ export const login = async (req, res) => {
         message: "User not found.",
       });
     }
+
+    const userData = querySnapshot.docs[0].data();
+
+    const passwordMatch = await bcrypt.compare(password, userData.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        status: "error",
+        message: "Invalid email or password.",
+      });
+    }
+
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    const user = userCredential.user;
 
     const accessToken = await user.getIdToken();
 
@@ -58,13 +74,9 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Error logging in:", error);
-
-    const errorCode = error.code || 500;
-    const errorMessage = error.message || "Internal Server Error";
-
-    return res.status(errorCode).json({
+    return res.status(500).json({
       status: "error",
-      message: errorMessage,
+      message: error.message || "Internal Server Error",
     });
   }
 };
