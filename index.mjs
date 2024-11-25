@@ -1,4 +1,5 @@
 import express, { json } from "express";
+import cors from 'cors';
 import { initializeFirebaseAdmin } from "./config/firebase-admin.mjs";
 import { allActiveMemo } from "./controllers/memo/active-memo.mjs";
 import { allArchivedMemo } from "./controllers/memo/archived-memo.mjs";
@@ -15,6 +16,13 @@ import { unarchiveMemo } from "./controllers/memo/unarchive-memo.mjs";
 
 const app = express();
 app.use(json());
+app.use(cors());
+
+app.get('/', async (req, res) => {
+  return res.status(200).json({
+      status: "success"
+  })
+})
 
 // Initialize Firebase Admin SDK
 initializeFirebaseAdmin();
