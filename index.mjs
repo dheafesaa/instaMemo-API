@@ -10,6 +10,8 @@ import { login } from "./controllers/authentication/login-memo.mjs";
 import { authMiddleware } from "./middleware/auth-middleware.mjs";
 import { getUserLoggedIn } from "./controllers/authentication/user-loggedin-memo.mjs";
 import { editMemo } from "./controllers/memo/edit-memo.mjs";
+import { archiveMemo } from "./controllers/memo/archive-memo.mjs";
+import { unarchiveMemo } from "./controllers/memo/unarchive-memo.mjs";
 
 const app = express();
 app.use(json());
@@ -29,6 +31,8 @@ app.post("/memo/add-memo", authMiddleware, addMemo);
 app.get("/memo/:memo_id", authMiddleware, getMemoDetail);
 app.delete("/memo/:memo_id", authMiddleware, deleteMemo);
 app.patch("/memo/:memo_id", authMiddleware, editMemo)
+app.patch("/memo/:memo_id/archive", authMiddleware, archiveMemo);
+app.patch("/memo/:memo_id/unarchive", authMiddleware, unarchiveMemo);
 
 // Start server
 const PORT = 3000;
