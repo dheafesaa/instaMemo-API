@@ -1,6 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore/lite";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import bcrypt from "bcryptjs";
+import argon2 from "argon2"; 
 import { auth, db } from "../../config/firebase-app.mjs";
 
 export const login = async (req, res) => {
@@ -27,7 +27,7 @@ export const login = async (req, res) => {
 
     const userData = querySnapshot.docs[0].data();
 
-    const passwordMatch = await bcrypt.compare(password, userData.password);
+    const passwordMatch = await argon2.verify(userData.password, password);
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -36,11 +36,7 @@ export const login = async (req, res) => {
       });
     }
 
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password,
-    );
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     const accessToken = await user.getIdToken();

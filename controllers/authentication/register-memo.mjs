@@ -7,7 +7,7 @@ import {
   getDocs,
 } from "firebase/firestore/lite";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import bcrypt from "bcryptjs";
+import argon2 from "argon2"; 
 import { auth, db } from "../../config/firebase-app.mjs";
 
 export const register = async (req, res) => {
@@ -30,7 +30,7 @@ export const register = async (req, res) => {
 
     const usersCollection = collection(db, "users");
     const existingUserSnapshot = await getDocs(
-      query(usersCollection, where("email", "==", email)),
+      query(usersCollection, where("email", "==", email))
     );
 
     if (!existingUserSnapshot.empty) {
@@ -40,14 +40,10 @@ export const register = async (req, res) => {
       });
     }
 
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
-    );
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const firebaseUser = userCredential.user;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await argon2.hash(password);
 
     const newUser = {
       name,
