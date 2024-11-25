@@ -7,7 +7,7 @@ import {
   getDocs,
 } from "firebase/firestore/lite";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { auth, db } from "../../config/firebase-app.mjs";
 
 export const register = async (req, res) => {

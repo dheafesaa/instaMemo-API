@@ -1,6 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore/lite";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { auth, db } from "../../config/firebase-app.mjs";
 
 export const login = async (req, res) => {

@@ -2,13 +2,13 @@
   "name": "InstaMemo-API",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "start": "node index.mjs",
     "dev": "nodemon index.mjs"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "firebase": "^11.0.2",
