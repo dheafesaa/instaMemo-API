@@ -1,4 +1,4 @@
-import { doc, deleteDoc } from "firebase/firestore/lite";
+import { doc, getDoc, deleteDoc } from "firebase/firestore/lite";
 import { db } from "../../config/firebase-app.mjs";
 
 export const deleteMemo = async (req, res) => {
