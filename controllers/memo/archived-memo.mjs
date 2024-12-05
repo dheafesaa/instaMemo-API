@@ -26,17 +26,13 @@ export const allArchivedMemo = async (req, res) => {
       ...doc.data(),
     }));
 
-    if (archivedMemoList.length === 0) {
-      return res.status(404).json({
-        status: "success",
-        message: "No archived memo found.",
-        data: [],
-      });
-    }
-
     return res.status(200).json({
       status: "success",
-      message: "Memo retrieved",
+      code: 200,
+      message:
+        archivedMemoList.length > 0
+          ? "Memos retrieved successfully."
+          : "No archived memos found.",
       data: archivedMemoList,
     });
   } catch (error) {
