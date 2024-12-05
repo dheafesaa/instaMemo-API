@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore/lite";
+import { collection, getDocs, query, where } from "firebase/firestore/lite";
 import { db } from "../../config/firebase-app.mjs";
 
 export const allArchivedMemo = async (req, res) => {
@@ -17,7 +17,6 @@ export const allArchivedMemo = async (req, res) => {
       archivedMemoCollection,
       where("archived", "==", true),
       where("owner", "==", user.uid),
-      orderBy("createdAt", "desc")
     );
 
     const querySnapshot = await getDocs(q);
