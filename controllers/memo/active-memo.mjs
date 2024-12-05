@@ -17,6 +17,7 @@ export const allActiveMemo = async (req, res) => {
       activeMemoCollection,
       where("archived", "==", false),
       where("owner", "==", user.uid),
+      orderBy("createdAt", "desc"),
     );
 
     const querySnapshot = await getDocs(q);
@@ -26,17 +27,12 @@ export const allActiveMemo = async (req, res) => {
       ...doc.data(),
     }));
 
-    if (activeMemoList.length === 0) {
-      return res.status(404).json({
-        status: "success",
-        message: "No active memos found.",
-        data: [],
-      });
-    }
-
     return res.status(200).json({
       status: "success",
-      message: "Memos retrieved",
+      message:
+        activeMemoList.length > 0
+          ? "Memos retrieved"
+          : "No active memos found.",
       data: activeMemoList,
     });
   } catch (error) {
