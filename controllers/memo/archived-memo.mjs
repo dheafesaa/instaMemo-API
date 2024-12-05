@@ -1,4 +1,10 @@
-import { collection, getDocs, query, where } from "firebase/firestore/lite";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore/lite";
 import { db } from "../../config/firebase-app.mjs";
 
 export const allArchivedMemo = async (req, res) => {
@@ -9,14 +15,6 @@ export const allArchivedMemo = async (req, res) => {
       return res.status(401).json({
         status: "error",
         message: "Unauthorized. Please log in.",
-      });
-    }
-
-    if (!req.params || Object.keys(req.params).length === 0) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "Bad Request. Missing or invalid parameters.",
       });
     }
 
@@ -39,7 +37,7 @@ export const allArchivedMemo = async (req, res) => {
       status: "success",
       message:
         archivedMemoList.length > 0
-          ? "Memos retrieved"
+          ? "Memos retrieved."
           : "No archived memos found.",
       data: archivedMemoList,
     });
