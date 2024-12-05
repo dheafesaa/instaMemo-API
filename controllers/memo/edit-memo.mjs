@@ -52,6 +52,10 @@ export const editMemo = async (req, res) => {
     if (body) updatedFields.body = body;
     updatedFields.updatedAt = new Date().toISOString(); 
 
+    if (!memoData.createdAt) {
+      updatedFields.createdAt = new Date().toISOString();
+    }
+
     await updateDoc(memoRef, updatedFields);
 
     return res.status(200).json({
@@ -59,6 +63,7 @@ export const editMemo = async (req, res) => {
       message: "Memo updated successfully",
       data: {
         id: memo_id,
+        ...memoData,
         ...updatedFields,
       },
     });
