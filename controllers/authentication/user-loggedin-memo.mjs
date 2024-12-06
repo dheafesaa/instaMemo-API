@@ -32,7 +32,7 @@ export const getUserLoggedIn = async (req, res) => {
       status: "success",
       message: "User retrieved",
       data: {
-        id: userData.id,
+        id: userData.firebaseUid,
         name: userData.name,
         email: userData.email,
       },
